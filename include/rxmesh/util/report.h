@@ -175,13 +175,20 @@ struct Report
 #endif
 
         // Clocks
+        float clockRateMhz = 0.0f;
+        CUDA_ERROR(cudaDeviceGetAttribute(
+            (int*)&clockRateMhz, cudaDevAttrClockRate, device_id));
         add_member(
-            "GPU Max Clock rate (GHz)", devProp.clockRate * 1e-6f, subdoc);
+            "GPU Max Clock rate (GHz)", clockRateMhz * 1e-3f, subdoc);
+    
+        float memoryClockRateMhz = 0.0f;
+        CUDA_ERROR(cudaDeviceGetAttribute(
+            (int*)&memoryClockRateMhz, cudaDevAttrMemoryClockRate, device_id));
         add_member(
-            "Memory Clock rate (GHz)", devProp.memoryClockRate * 1e-6f, subdoc);
+            "Memory Clock rate (GHz)", memoryClockRateMhz * 1e-3f, subdoc);
         add_member("Memory Bus Width (bit)", devProp.memoryBusWidth, subdoc);
         add_member("Peak Memory Bandwidth (GB/s)",
-                   2.0 * devProp.memoryClockRate *
+                   2.0 * memoryClockRateMhz *
                        (devProp.memoryBusWidth / 8.0) / 1.0E6,
                    subdoc);
 

@@ -1,3 +1,4 @@
+#include <thrust/functional.h>
 #include "gtest/gtest.h"
 #include "rxmesh/attribute.h"
 #include "rxmesh/reduce_handle.h"
@@ -120,7 +121,7 @@ TEST(Attribute, Reduce)
 
     ReduceHandle reduce_handle(*attr);
 
-    uint32_t output = reduce_handle.reduce(*attr, cub::Max(), 0);
+    uint32_t output = reduce_handle.reduce(*attr, thrust::maximum<uint32_t>(), 0);
 
     ASSERT_EQ(cudaDeviceSynchronize(), cudaSuccess);
 

@@ -223,7 +223,7 @@ void neo_hookean(RXMeshStatic& rx, T dx)
             rx, is_dbc_satisfied, x_tilde, is_dbc, dbc_target, time_step, tol);
 
         // how many DBC are satisfied
-        int num_satisfied = rh.reduce(is_dbc_satisfied, cub::Sum(), 0);
+        int num_satisfied = rh.reduce(is_dbc_satisfied, thrust::plus<int>(), 0);
 
         // satisfied DBC are eliminated from the system which is the same
         // as adding boundary conditions where we zero out their gradients
@@ -277,7 +277,7 @@ void neo_hookean(RXMeshStatic& rx, T dx)
                                 tol);
 
             // how many DBC are satisfied
-            num_satisfied = rh.reduce(is_dbc_satisfied, cub::Sum(), 0);
+            num_satisfied = rh.reduce(is_dbc_satisfied, thrust::plus<int>(), 0);
 
             // apply bc
             newton_solver.apply_bc(is_dbc_satisfied);

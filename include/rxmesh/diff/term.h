@@ -250,7 +250,7 @@ struct TemplatedTerm : public Term<typename ScalarT::PassiveType, ObjHandleT>
      */
     T get_loss(cudaStream_t stream = NULL)
     {
-        return reducer->reduce(*loss, cub::Sum(), 0, INVALID32, stream);
+        return reducer->reduce(*loss, thrust::plus<T>(), 0, INVALID32, stream);
     }
 
     LambdaT term;

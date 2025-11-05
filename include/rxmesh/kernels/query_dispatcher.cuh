@@ -484,7 +484,7 @@ __device__ __inline__ void higher_query_block_dispatcher(
     thread_head_flags[0] = 0;
     BlockRadixSort(all_temp_storage.sort_storage).Sort(thread_data);
     BlockDiscontinuity(all_temp_storage.discont_storage)
-        .FlagHeads(thread_head_flags, thread_data, cub::Inequality());
+        .FlagHeads(thread_head_flags, thread_data, thrust::not_equal_to<uint32_t>());
 
     if (thread_head_flags[0] == 1 && thread_data[0] != INVALID32) {
         uint32_t id         = ::atomicAdd(&s_num_patches, uint32_t(1));

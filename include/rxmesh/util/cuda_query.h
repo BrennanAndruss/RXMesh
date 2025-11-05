@@ -93,14 +93,22 @@ inline cudaDeviceProp cuda_query(const int dev)
                 dev_prop.maxBlocksPerMultiProcessor);
     RXMESH_INFO("ECC support: {}",
                 (dev_prop.ECCEnabled ? "Enabled" : "Disabled"));
+
+    float clockRateMhz = 0.0f;
+    CUDA_ERROR(
+        cudaDeviceGetAttribute((int*)&clockRateMhz, cudaDevAttrClockRate, dev));
     RXMESH_INFO("GPU Max Clock rate: {0:.1f} MHz ({1:.2f} GHz)",
-                dev_prop.clockRate * 1e-3f,
-                dev_prop.clockRate * 1e-6f);
-    RXMESH_INFO("Memory Clock rate: {0:.1f} Mhz",
-                dev_prop.memoryClockRate * 1e-3f);
+                clockRateMhz,
+                clockRateMhz * 1e-3f);
+
+    float memoryClockRateMhz = 0.0f;
+    CUDA_ERROR(cudaDeviceGetAttribute(
+        (int*)&memoryClockRateMhz, cudaDevAttrMemoryClockRate, dev));
+    RXMESH_INFO("Memory Clock rate: {0:.1f} Mhz", memoryClockRateMhz);
+
     RXMESH_INFO("Memory Bus Width:  {}-bit", dev_prop.memoryBusWidth);
-    const double maxBW = 2.0 * dev_prop.memoryClockRate *
-                         (dev_prop.memoryBusWidth / 8.0) / 1.0E6;
+    const double maxBW =
+        2.0 * memoryClockRateMhz * (dev_prop.memoryBusWidth / 8.0) / 1.0E6;
     RXMESH_INFO("Peak Memory Bandwidth: {0:f}(GB/s)", maxBW);
     RXMESH_INFO("Kernels compiled for compute capability: {}", cuda_arch());
 
